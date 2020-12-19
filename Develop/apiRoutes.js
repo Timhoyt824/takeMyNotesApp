@@ -6,6 +6,7 @@ module.exports = function(app) {
 
   app.get('/api/notes', function (req, res) {
     fs.readFile("db/db.json", "utf8", function(error,data) {
+      if (error) throw error;
       res.json(JSON.parse(data));
     });
     
@@ -14,18 +15,17 @@ module.exports = function(app) {
   //POST Requests
 
     app.post("/api/notes", function(req, res) {
-    var newNote = req.body;
-    newNote.id = uuidv4();
+    var note = req.body;
+    note.id = uuidv4();
       fs.readFile("db/db.json", "utf8", function(error,data) {
         var data = JSON.parse(data);
-        data.push(newNote);
+        data.push(note);
         fs.writeFile("db/db.json", JSON.stringify(data), function(error){
-          if (error)
-           throw error;
+          if (error) throw error;
            console.log("Note Added!");
         })
       });
-      res.json(newNote);
+      res.json(note);
 
     });
 
@@ -42,8 +42,7 @@ module.exports = function(app) {
             };
         }); 
         fs.writeFile("db/db.json", JSON.stringify(noteData), function(error){
-          if (error)
-          throw error;
+          if (error) throw error;
           res.end(console.log("Note Deleted!"));
         })
       });
